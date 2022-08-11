@@ -1,4 +1,4 @@
-package your.dream.superboard.common;
+package your.dream.superboard.authentication.password.encoder;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;

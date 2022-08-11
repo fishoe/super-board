@@ -5,6 +5,10 @@ logging:
     org.springframework.security: INFO
 
 spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -16,11 +20,10 @@ spring:
     hibernate:
       ddl-auto : validate
     generate-ddl: false
-#  datasource:
-#    driver-class-name: org.postgresql.Driver
-#    url: jdbc:postgresql://34.64.120.190:5432/dts-express-test
-#    username: dts_db_user_fishoe
-#    password: JqUBZR^"T]0&^";z
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
 
 jwt:
   public:

@@ -8,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import your.dream.superboard.authentication.token.CommonAuthenticationToken;
-import your.dream.superboard.common.PasswordEncoderStorage;
+import your.dream.superboard.authentication.password.encoder.PasswordEncoderStorage;
 import your.dream.superboard.users.user.service.UserService;
 
 @Component

@@ -1,7 +1,9 @@
 package your.dream.superboard.users.user.data;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import your.dream.superboard.users.user.request.UserRequest;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +14,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "user_personal")
+@NoArgsConstructor
 public class UserPersonal {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -27,7 +30,7 @@ public class UserPersonal {
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
 
-    @OneToOne(mappedBy = "personal", orphanRemoval = true)
+    @OneToOne(mappedBy = "personal", cascade = {CascadeType.REFRESH, CascadeType.MERGE}, orphanRemoval = true)
     private UserAuthentication userAuthentication;
 
     @OneToMany(mappedBy = "user", orphanRemoval = true)
@@ -36,4 +39,9 @@ public class UserPersonal {
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE, CascadeType.REFRESH}, orphanRemoval = true)
     private Set<UserAuthority> authorities = new LinkedHashSet<>();
 
+    public UserPersonal(UserRequest userRequest){
+        name = userRequest.getName();
+        createdAt = LocalDateTime.now();
+        deleted = false;
+    }
 }
