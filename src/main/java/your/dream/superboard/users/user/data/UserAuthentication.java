@@ -7,7 +7,7 @@ import your.dream.superboard.authentication.password.encoder.PasswordEncoderStor
 import your.dream.superboard.users.user.request.UserRequest;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -33,12 +33,12 @@ public class UserAuthentication {
     private UserPersonal personal;
 
     @Column(name = "last_password_changed", nullable = false)
-    private LocalDate lastPasswordChanged;
+    private Instant lastPasswordChanged;
 
     public UserAuthentication(UserRequest userRequest, UserPersonal personal, PasswordEncoderStorage pwEncoder){
         username = userRequest.getUsername();
         password = pwEncoder.getPasswordEncoder().encode(userRequest.getPassword());
         this.personal = personal;
-        lastPasswordChanged = personal.getCreatedAt().toLocalDate();
+        lastPasswordChanged = personal.getCreatedAt();
     }
 }

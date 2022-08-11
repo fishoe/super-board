@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -33,15 +32,15 @@ public class RefreshToken {
     private Boolean enabled;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Column(name = "expired_at", nullable = false)
-    private LocalDateTime expiredAt;
+    private Instant expiredAt;
 
     @Column(name = "replaced_by", length = 128)
     private String replacedBy;
 
-    public RefreshToken(String subject, String token, LocalDateTime now, Long expiry){
+    public RefreshToken(String subject, String token, Instant now, Long expiry){
         this.subject = subject;
         this.token = token;
         enabled = true;
@@ -49,7 +48,7 @@ public class RefreshToken {
         expiredAt = now.plusSeconds(expiry);
     }
 
-    public RefreshToken(String subject, String token, String oldToken, LocalDateTime now, Long expiry){
+    public RefreshToken(String subject, String token, String oldToken, Instant now, Long expiry){
         this(subject, token, now, expiry);
         replacedBy = oldToken;
     }

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Getter
 @Setter
@@ -24,8 +24,8 @@ public class UserLocked {
     private UserPersonal user;
 
     @Column(name = "locked_from")
-    private LocalDateTime lockedFrom;
+    private Instant lockedFrom;
 
     @Column(name = "locked_to")
-    private LocalDateTime lockedTo;
+    private Instant lockedTo;
 }

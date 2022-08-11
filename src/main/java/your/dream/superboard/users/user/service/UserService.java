@@ -17,7 +17,7 @@ import your.dream.superboard.users.user.repository.UserPersonalRepository;
 import your.dream.superboard.users.user.request.UserRequest;
 import your.dream.superboard.users.user.response.UserResponse;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -41,7 +41,7 @@ public class UserService implements UserDetailsService {
 
             boolean is_locked = false;
             if (last_locked.isPresent())
-                is_locked = last_locked.get().getLockedTo().isAfter(LocalDateTime.now());
+                is_locked = last_locked.get().getLockedTo().isAfter(Instant.now());
 
             return new StoredUserCredit(user, is_locked);
         } catch (NoSuchElementException e){

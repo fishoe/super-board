@@ -1,7 +1,6 @@
 package your.dream.superboard.users.user.response;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import your.dream.superboard.users.user.data.UserPersonal;
 
 @Getter

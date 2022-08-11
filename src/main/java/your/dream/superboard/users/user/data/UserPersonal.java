@@ -6,7 +6,7 @@ import lombok.Setter;
 import your.dream.superboard.users.user.request.UserRequest;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -25,7 +25,7 @@ public class UserPersonal {
     private String name;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Column(name = "deleted", nullable = false)
     private Boolean deleted = false;
@@ -41,7 +41,7 @@ public class UserPersonal {
 
     public UserPersonal(UserRequest userRequest){
         name = userRequest.getName();
-        createdAt = LocalDateTime.now();
+        createdAt = Instant.now();
         deleted = false;
     }
 }

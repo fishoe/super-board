@@ -7,17 +7,13 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import your.dream.superboard.authentication.data.RefreshToken;
 import your.dream.superboard.authentication.repository.RefreshTokenRepository;
 import your.dream.superboard.authentication.response.JwtResponse;
 import your.dream.superboard.common.RandomGenerator;
-import your.dream.superboard.users.user.data.UserAuthentication;
 import your.dream.superboard.users.user.service.UserService;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +34,7 @@ public class AuthenticationService {
     private static final Long REFRESH_EXPIRY = 2628000L;
 
     public JwtResponse issueUserJwt(Authentication authentication){
-        LocalDateTime now = LocalDateTime.now();
+        Instant now = Instant.now();
         String subject = USER + "|" + authentication.getName();
         String scope = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -52,21 +48,20 @@ public class AuthenticationService {
                 TOKEN_TYPE);
     }
 
-    private String accessToken(String issuer, String subject, String scope, LocalDateTime now){
-        Instant utc_now = now.toInstant(ZoneOffset.UTC);
+    private String accessToken(String issuer, String subject, String scope, Instant now){
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(issuer)
                 .subject(subject)
-                .issuedAt(utc_now)
-                .expiresAt(utc_now.plusSeconds(EXPIRY))
+                .issuedAt(now)
+                .expiresAt(now.plusSeconds(EXPIRY))
                 .claim(PRIVATE_CLAIM_SCOPE, scope)
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    private String makeRefreshToken(String subject, LocalDateTime now){
+    private String makeRefreshToken(String subject, Instant now){
         try {
             refreshTokenRepository.updateEnabledBySubject(false,subject);
             RefreshToken refreshToken = new RefreshToken(
@@ -77,12 +72,11 @@ public class AuthenticationService {
             refreshTokenRepository.save(refreshToken);
             return refreshToken.getToken();
         } catch (Exception e){
-            System.out.println(e);
-            return null;
+            return makeRefreshToken(subject, now);
         }
     }
 
-    private String rotateRefreshToken(String token, LocalDateTime now){
+    private String rotateRefreshToken(String token, Instant now){
         RefreshToken oldToken = refreshTokenRepository.findByToken(token).orElseThrow();
         if (!oldToken.getEnabled()) {
             // refresh token leaked
