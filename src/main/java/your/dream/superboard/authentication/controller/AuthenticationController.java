@@ -21,4 +21,5 @@ public class AuthenticationController {
         JwtResponse jwtResponse = authenticationService.issueUserJwt(authentication);
         return ResponseEntity.ok(jwtResponse);
     }
+
 }

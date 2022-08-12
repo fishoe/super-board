@@ -10,7 +10,7 @@ import java.util.Collection;
 
 public class StoredUserCredit implements UserDetails, CredentialsContainer {
 
-    private static final String ROLE_USER = "ROLE_USER";
+    private static final String ROLE_USER = "USER";
     private final String username;
     private String password;
     Collection<GrantedAuthority> authorities;
