@@ -5,12 +5,14 @@ import your.dream.superboard.users.user.data.UserPersonal;
 
 @Getter
 public class UserResponse {
+    private final Long id;
     private String username;
-    private String name;
+    private final String name;
 
     public UserResponse(UserPersonal user){
         if (user.getUserAuthentication() != null)
             username = user.getUserAuthentication().getUsername();
+        id = user.getId();
         name = user.getName();
     }
 }

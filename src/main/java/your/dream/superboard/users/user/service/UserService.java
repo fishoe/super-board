@@ -11,6 +11,7 @@ import your.dream.superboard.users.user.authentication.StoredUserCredit;
 import your.dream.superboard.users.user.data.UserAuthentication;
 import your.dream.superboard.users.user.data.UserLocked;
 import your.dream.superboard.users.user.data.UserPersonal;
+import your.dream.superboard.users.user.exception.DuplicatedUsername;
 import your.dream.superboard.users.user.repository.UserAuthenticationRepository;
 import your.dream.superboard.users.user.repository.UserLockedRepository;
 import your.dream.superboard.users.user.repository.UserPersonalRepository;
@@ -49,28 +50,24 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public UserPersonal findUserByUsername(String username) {
+    private UserPersonal findUserByUsername(String username) {
         UserAuthentication user = userAuthenticationRepository.findByUsername(username)
                 .orElseThrow();
         return user.getPersonal();
     }
 
-    public UserResponse createUser(UserRequest userRequest){
-        if (validateUser(userRequest)){
-            UserPersonal personal = new UserPersonal(userRequest);
-            UserAuthentication user = new UserAuthentication(userRequest, personal, pwEncoder);
-            userAuthenticationRepository.save(user);
-            personal.setUserAuthentication(user);
-            return new UserResponse(personal);
-        } else {
-            // TODO
-            // invalidUserRequest
-            // need to throw Exception
-            return null;
-        }
+    public UserResponse findUserPersonalByAdmin(Long userId){
+        UserPersonal user = userPersonalRepository.findById(userId).orElseThrow();
+        return new UserResponse(user);
     }
 
-    private boolean validateUser(UserRequest userRequest){
-        return true;
+    public UserResponse createUser(UserRequest userRequest){
+        if (userAuthenticationRepository.existsByUsername(userRequest.getUsername()))
+            throw new DuplicatedUsername(userRequest.getUsername());
+        UserPersonal personal = new UserPersonal(userRequest);
+        UserAuthentication user = new UserAuthentication(userRequest, personal, pwEncoder);
+        userAuthenticationRepository.save(user);
+        personal.setUserAuthentication(user);
+        return new UserResponse(personal);
     }
 }
