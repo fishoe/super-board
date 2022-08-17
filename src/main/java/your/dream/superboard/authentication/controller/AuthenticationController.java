@@ -16,8 +16,8 @@ import your.dream.superboard.users.user.service.UserService;
 public class AuthenticationController {
     private final UserService userService;
     private final AuthenticationService authenticationService;
-    @PostMapping()
-    public ResponseEntity<?> userSignIn(Authentication authentication){
+    @PostMapping
+    public ResponseEntity<JwtResponse> userSignIn(Authentication authentication){
         JwtResponse jwtResponse = authenticationService.issueUserJwt(authentication);
         return ResponseEntity.ok(jwtResponse);
     }

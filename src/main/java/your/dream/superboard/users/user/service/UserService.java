@@ -7,11 +7,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import your.dream.superboard.authentication.password.encoder.PasswordEncoderStorage;
+import your.dream.superboard.users.user.authentication.AuthenticationType;
 import your.dream.superboard.users.user.authentication.StoredUserCredit;
 import your.dream.superboard.users.user.data.UserAuthentication;
 import your.dream.superboard.users.user.data.UserLocked;
 import your.dream.superboard.users.user.data.UserPersonal;
 import your.dream.superboard.users.user.exception.DuplicatedUsername;
+import your.dream.superboard.users.user.exception.InvalidJwtSubject;
+import your.dream.superboard.users.user.exception.NotSupportedAuthenticationType;
 import your.dream.superboard.users.user.repository.UserAuthenticationRepository;
 import your.dream.superboard.users.user.repository.UserLockedRepository;
 import your.dream.superboard.users.user.repository.UserPersonalRepository;
@@ -29,6 +32,24 @@ public class UserService implements UserDetailsService {
     private final UserLockedRepository userLockedRepository;
     private final UserPersonalRepository userPersonalRepository;
     private final PasswordEncoderStorage pwEncoder;
+
+    public UserPersonal findUser(String jwtSubject) {
+        String[] splitSubject = jwtSubject.split("\\|");
+        if (splitSubject.length != 2)
+            throw new InvalidJwtSubject();
+        var authType = AuthenticationType.valueOf(splitSubject[0]);
+        var username = splitSubject[1];
+
+        switch (authType) {
+            case USER -> {
+                return findUserByUsername(username);
+            }
+            case NAVER, KAKAO -> {
+                throw new NotSupportedAuthenticationType();
+            }
+        }
+        throw new NotSupportedAuthenticationType();
+    }
 
     @Transactional
     @Override

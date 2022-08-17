@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import your.dream.superboard.article.data.domain.ArticleStatus;
 import your.dream.superboard.article.request.PostArticleRequest;
+import your.dream.superboard.authentication.password.encoder.PasswordEncoderStorage;
 import your.dream.superboard.users.user.data.UserPersonal;
 
 import javax.persistence.*;
@@ -61,17 +62,24 @@ public class Article {
     private Set<ArticleViewLog> viewLogs = new LinkedHashSet<>();
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "group_major_id", nullable = false)
-    private ArticleGroupMajor groupMajor;
+    @JoinColumn(name = "group_main_id", nullable = false)
+    private ArticleGroupMain groupMain;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "group_minor_id")
-    private ArticleGroupMinor groupMinor;
+    @JoinColumn(name = "group_sub_id")
+    private ArticleGroupSub groupSub;
 
-    @OneToMany(mappedBy = "article", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ArticleTag> tags = new LinkedHashSet<>();
 
-    public Article(PostArticleRequest postArticleRequest, ArticleGroupMajor groupMajor){
+    @Column(name = "password", length = 200)
+    private String password;
+
+    public Article(
+            PostArticleRequest postArticleRequest,
+            ArticleGroupMain groupMain,
+            PasswordEncoderStorage pwEncoder
+    ){
         Instant now = Instant.now();
 
         status = ArticleStatus.PUBLISHED;
@@ -81,16 +89,24 @@ public class Article {
 
         author = null;
         authorName = postArticleRequest.getAuthor();
+        if (postArticleRequest.getPassword() != null)
+            password = pwEncoder.getPasswordEncoder().encode(postArticleRequest.getPassword());
 
-        this.groupMajor = groupMajor;
+        this.groupMain = groupMain;
 
         subject = postArticleRequest.getSubject();
         context = postArticleRequest.getContext();
     }
 
-    public Article(PostArticleRequest postArticleRequest, ArticleGroupMajor groupMajor, UserPersonal user){
-        this(postArticleRequest, groupMajor);
+    public Article(
+            PostArticleRequest postArticleRequest,
+            ArticleGroupMain groupMain,
+            UserPersonal user,
+            PasswordEncoderStorage pwEncoder
+    ){
+        this(postArticleRequest, groupMain, pwEncoder);
         author = user;
         authorName = user.getName();
+        password = null;
     }
 }

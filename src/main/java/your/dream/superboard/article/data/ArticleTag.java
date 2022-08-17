@@ -23,11 +23,12 @@ public class ArticleTag {
     @Column(name = "tag", length = 40)
     private String tag;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "article_id", nullable = false)
     private Article article;
 
-    public ArticleTag(String tag){
+    public ArticleTag(Article article ,String tag){
+        this.article = article;
         this.tag = tag;
     }
 

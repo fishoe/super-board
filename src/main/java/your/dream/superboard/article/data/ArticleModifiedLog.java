@@ -31,4 +31,8 @@ public class ArticleModifiedLog {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @ManyToOne
+    @JoinColumn(name = "group_sub_id")
+    private ArticleGroupSub groupSub;
+
 }
